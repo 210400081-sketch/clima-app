@@ -89,7 +89,6 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
-        builhtml()
         $(document).ready(function () {
             $('#btn').click(function () {
                 var city = $('.inputCity').val().trim();
@@ -102,28 +101,33 @@
                 const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&lang=es`;
 
                 $.getJSON(url, function (data) {
-                    saveCache(data)
-
+                    saveCache(data);
+                    builhtml(data); // Llamamos a builhtml con los datos de la API
                 }).fail(function () {
                     $("#container").html("<p style='color:red;'> No se encontró la ciudad</p>");
                 });
             });
         });
+
         function saveCache(data) {
-            localStorage.getItem('locationName', data.location.name);
-            localStorage.getItem('currentTemp', data.current.temp_c);
-            localStorage.getItem('conditionicon', data.current.condition.icon);
-            localStorage.getItem('connditiontext', data.current.condition.text);
-            localStorage.getItem('humidity', data.current.humidity);
-            localStorage.getItem('windKph', data.current.wind_kph);
+            localStorage.setItem('locationName', data.location.name);
+            localStorage.setItem('currentTemp', data.current.temp_c);
+            localStorage.setItem('conditionIcon', data.current.condition.icon);
+            localStorage.setItem('conditionText', data.current.condition.text);
+            localStorage.setItem('humidity', data.current.humidity);
+            localStorage.setItem('windKph', data.current.wind_kph);
         }
-        function builhtml() {
-            builhtml()
-            var htmlClima = "<p><strong>" + data.location.name + "</strong></p>";
-            "<p style='font-size:22px; font-weight:bold;'>" + data.current.temp_c + "°C</p>";
-            "<img src=' " + data.current.condition.icon + "'>";
-            <p><strong> Humedad:</strong>${localStorage.getItem("humidity")}%</p>
-            "<p> Viento: " + data.current.wind_kph + " km/h</p>";
+
+        function builhtml(data) {
+            // Usamos las variables del API y las del localStorage para construir el HTML
+            let htmlClima = `
+                <p><strong>${data.location.name}</strong></p>
+                <p style='font-size:22px; font-weight:bold;'>${data.current.temp_c}°C</p>
+                <img src='https:${data.current.condition.icon}' alt='${data.current.condition.text}'>
+                <p><strong>Humedad:</strong> ${data.current.humidity}%</p>
+                <p><strong>Viento:</strong> ${data.current.wind_kph} km/h</p>
+                <p><strong>Condición:</strong> ${data.current.condition.text}</p>
+            `;
             $("#container").html(htmlClima);
         }
     </script>
